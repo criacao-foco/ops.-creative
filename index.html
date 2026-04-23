@@ -14,13 +14,14 @@
         @font-face { font-family: 'Museo Sans'; src: url('MuseoSans_700.otf') format('opentype'); font-weight: 700; }
         @font-face { font-family: 'Museo Sans'; src: url('MuseoSans_900.otf') format('opentype'); font-weight: 900; }
 
-        body { font-family: 'Museo Sans', sans-serif; background-color: #0F0E0E; color: #E6E6E6; }
+        body { font-family: 'Museo Sans', sans-serif; background-color: #0F0E0E; color: #E6E6E6; margin: 0; }
         
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: #0F0E0E; }
         ::-webkit-scrollbar-thumb { background: #034279; border-radius: 10px; }
         
-        .foco-tag { font-size: 10px; letter-spacing: 0.05em; text-transform: lowercase; }
+        /* Tipografia e Efeitos Base */
+        .foco-tag { font-size: 14px; letter-spacing: 0.05em; text-transform: lowercase; }
         .glow-blue { box-shadow: 0 0 20px rgba(27, 152, 224, 0.12); }
         .glow-ops { box-shadow: 0 0 25px rgba(3, 66, 121, 0.4); }
         
@@ -50,70 +51,134 @@
                 }
             }
         }
-    </script>
+
+        // Função do Painel de Clientes (Com Lógica de Logótipo/Miniatura Integrada)
+        function openClientPanel(name, category, scope, deliverables, csName, sla, logoUrl) {
+            const panel = document.getElementById('client-detail-panel');
+            const overlay = document.getElementById('side-panel-overlay');
+            
+            // Preenchimento de Textos
+            document.getElementById('panel-client-name').innerText = name;
+            document.getElementById('panel-client-category').innerText = category || 'Cliente';
+            document.getElementById('panel-client-scope').innerText = scope || 'Escopo em definição.';
+            document.getElementById('panel-client-deliverables').innerText = deliverables || 'Em alinhamento.';
+            document.getElementById('panel-client-cs').innerText = csName || 'A definir';
+            document.getElementById('panel-client-sla').innerText = sla || '3.5 dias úteis';
+
+            // Lógica da Miniatura (Imagem vs Letra Inicial)
+            const logoImg = document.getElementById('panel-client-logo');
+            const initialSpan = document.getElementById('panel-client-initial');
+            
+            if (logoUrl && logoUrl.trim() !== '') {
+                logoImg.src = logoUrl;
+                logoImg.classList.remove('hidden');
+                initialSpan.classList.add('hidden');
+            } else {
+                logoImg.classList.add('hidden');
+                initialSpan.innerText = name.charAt(0).toUpperCase();
+                initialSpan.classList.remove('hidden');
+            }
+
+            // Animação de Entrada
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.add('opacity-100');
+                panel.classList.remove('translate-x-full');
+            }, 10);
+        }
+
+        function closeClientPanel() {
+            const panel = document.getElementById('client-detail-panel');
+            const overlay = document.getElementById('side-panel-overlay');
+
+            panel.classList.add('translate-x-full');
+            overlay.classList.remove('opacity-100');
+            
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 300);
+        }
+    </script> 
 </head>
+
 <body class="text-foco-text min-h-screen flex flex-col selection:bg-foco-vector selection:text-white">
 
-    <header class="w-full px-10 pt-10 pb-6 flex flex-col gap-8 bg-foco-base z-20">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+    <header class="relative w-full h-[50vh] md:h-[60vh] overflow-hidden bg-black z-20">
+        <video class="absolute top-1/2 left-1/2 min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover opacity-70 z-0" autoplay muted loop playsinline>
+            <source src="vinheta.mp4" type="video/mp4">
+        </video>
+        
+        <div class="absolute inset-0 bg-gradient-to-t from-foco-base via-black/40 to-black/10 z-10"></div>
+        
+        <div class="relative z-20 w-full h-full px-10 flex flex-col md:flex-row justify-between items-start md:items-end pb-8 pt-10">
             <div>
-                <img src="logo.png" alt="foco group." class="h-10 w-auto" onerror="this.onerror=null; this.outerHTML='<span class=\'text-4xl font-bold tracking-tighter text-foco-text\'>foco group.</span>';">
-                <p class="text-foco-muted text-lg font-light mt-3 lowercase">.flow operacional | criação & conteúdo</p>
+                <img src="logo.png" alt="foco group." class="h-10 w-auto mb-3" onerror="this.onerror=null; this.outerHTML='<span class=\'text-6xl font-bold tracking-tighter text-foco-text\'>foco group.</span>';">
+                <p class="text-foco-highlight text-xl font-light lowercase">.flow operacional | criação</p>
             </div>
             
-            <div class="flex flex-col items-end gap-4">
-                <div class="w-48 aspect-[3/1] rounded-xl overflow-hidden shadow-2xl bg-transparent group">
-                    <video class="w-full h-full object-cover" autoplay muted loop playsinline>
-                        <source src="vinheta.mp4" type="video/mp4">
-                    </video>
+            <div class="flex flex-col items-end gap-2 mt-auto">
+                <div class="flex items-center gap-2 border border-foco-border px-4 py-1.5 rounded-full bg-foco-card glow-blue">
+                    <span class="w-1.5 h-1.5 rounded-full bg-foco-highlight animate-pulse"></span>
+                    <span class="foco-tag text-foco-highlight font-medium">#somos focados</span>
                 </div>
-                
-                <div class="flex flex-col items-end gap-2">
-                    <div class="flex items-center gap-2 border border-foco-border px-4 py-1.5 rounded-full bg-foco-card glow-blue">
-                        <span class="w-1.5 h-1.5 rounded-full bg-foco-highlight animate-pulse"></span>
-                        <span class="foco-tag text-foco-highlight font-medium">#somos focados</span>
-                    </div>
-                    <span class="foco-tag text-foco-muted mr-2 lowercase">hub centralizado: namtab.io</span>
-                </div>
+                <span class="foco-tag text-foco-muted mr-2 lowercase">hub centralizado: namtab.io</span>
             </div>
         </div>
     </header>
 
-    <div class="flex flex-col lg:flex-row flex-1 px-10 gap-8">
+    <div class="flex flex-col lg:flex-row flex-1 px-10 gap-8 mt-10">
         
         <aside class="w-full lg:w-72 flex flex-col gap-6 shrink-0 border-r border-foco-border pr-6 pb-20">
             <div class="mb-2">
-                <h2 class="text-lg font-semibold text-foco-text lowercase">.clientes</h2>
+                <h2 class="text-xl font-semibold text-foco-text lowercase">.clientes</h2>
             </div>
 
             <div class="space-y-4">
                 <span class="foco-tag text-foco-highlight font-bold">.produtora (orgânico)</span>
-                <ul class="text-[11px] text-foco-text opacity-70 space-y-2 pl-2 border-l border-foco-vector">
-                    <li>AmorSaúde</li><li>Colégio Excelência</li><li>Dr. Wenderson</li><li>Duarte Construtora</li><li>Innova</li><li>Insect</li><li>Instituto Marcos Barboza</li><li>MagsCan</li><li>Mulher Express</li><li>NEW Led</li><li>Nova Cintra</li><li>Oba Burguer</li><li>oBoticário</li><li>Orbi</li><li>Ortoestética</li><li>Silvio Mariano</li><li>Une Energia</li><li>Aluminox</li><li>Dr. Warley</li>
+                <ul class="text-[13px] text-foco-text opacity-70 space-y-2.5 pl-2 border-l border-foco-vector">
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('AmorSaúde', 'Clínica', 'Planejamento e Direcionamento', '12 estáticos', 'Júlia Barbosa', 'marketing. / health.', 'logo-amor.png')">AmorSaúde</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Colégio Excelência', 'Instituição de Ensino', 'Planejamento e Criação', '10 estáticos // 3 audiovisuais', 'Fran Niz', 'marketing.', '')">Colégio Excelência</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Dr. Wenderson', 'Médico', 'Formatação de Produtos', '8 estáticos // 4 audiovisuais', 'Fran Niz', '4.5 dias úteis', '')">Dr. Wenderson</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Duarte Construtora', 'Construção Civil', 'Gestão de Redes', '8 estáticos // 3 audiovisuais', 'Júlia Barbosa', '4.5 dias úteis', '')">Duarte Construtora</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Innova', 'Distribuidora B2B', 'Criação Orgânica', '5 estáticos // 10 audiovisuais', 'Júlia Barbosa', '4.5 dias úteis', 'logo-innova.png')">Innova</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Insect', 'Dedetização', 'Configuração de Redes', '5 estáticos // 10 audiovisuais', 'Fran Niz', '4.5 dias úteis', '')">Insect</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Instituto Marcos Barboza', 'Instituição Social', 'Criação e Copys', '7 estáticos // 3 audiovisuais', 'Fran Niz', '4.5 dias úteis', '')">Instituto Marcos Barboza</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('MagsCan', 'Clínica de Imagem', 'Planejamento', '10 estáticos', 'Júlia Barbosa', '3.5 dias úteis', '')">MagsCan</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Mulher Express', 'Salão de Beleza', 'Auditoria e Treinamento', '10 roteiros', 'Fran Niz', '3.5 dias úteis', '')">Mulher Express</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('NEW Led', 'Mídia OOH', 'Publicidade de Alto Impacto', '5 roteiros', 'Fran Niz', '3.5 dias úteis', '')">NEW Led</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Nova Cintra', 'Distribuidora', 'Planejamento B2B', '5 estáticos // 10 audiovisuais', 'Júlia Barbosa', '4.5 dias úteis', '')">Nova Cintra</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Oba Burguer', 'Alimentação', 'Auditoria estética', '15 estáticos // 10 audiovisuais', 'Fran Niz', '4.5 dias úteis', '')">Oba Burguer</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('oBoticário', 'Varejo', 'Planejamento OOH', '6 audiovisuais', 'Júlia Barbosa', '4.5 dias úteis', '')">oBoticário</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Orbi', 'Provedor de internet', 'Planejamento', '9 estáticos // 3 audiovisuais', 'Fran Niz', '4.5 dias úteis', '')">Orbi</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Ortoestética', 'Clínica Odontológica', 'Planejamento', '10 estáticos', 'Fran Niz / Júlia', '3.5 dias úteis', '')">Ortoestética</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Silvio Mariano', 'Psicanalista', 'Mentoria', '7 estáticos // 4 audiovisuais', 'Júlia Barbosa', '4.5 dias úteis', '')">Silvio Mariano</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Une Energia', 'Gestão Elétrica', 'Planejamento Estratégico', '10 estáticos // 4 audiovisuais', 'Thaina M.', '4.5 dias úteis', '')">Une Energia</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Aluminox', 'Indústria', 'Gestão de Redes', 'Em definição', 'A definir', '4.5 dias úteis', '')">Aluminox</li>
+                    <li class="cursor-pointer hover:text-foco-highlight transition-all" onclick="openClientPanel('Dr. Warley', 'Médico', 'Produto Digital', '8 estáticos', 'Fran Niz', '4.5 dias úteis', '')">Dr. Warley</li>
                 </ul>
             </div>
 
             <div class="space-y-4">
                 <span class="foco-tag text-foco-highlight font-bold">.marketing (tráfego)</span>
                 <div class="bg-foco-card border border-foco-border rounded p-4 flex flex-col items-center justify-center gap-2">
-                    <span class="text-[9px] text-foco-highlight lowercase tracking-[0.2em] font-bold loading-pulse">.integração</span>
+                    <span class="text-[11px] text-foco-highlight lowercase tracking-[0.2em] font-bold loading-pulse">.integração</span>
                 </div>
             </div>
 
             <div class="space-y-4">
                 <span class="foco-tag text-foco-highlight font-bold">.health</span>
-                <ul class="text-[11px] text-foco-text opacity-70 space-y-1.5 pl-2 mb-2">
+                <ul class="text-[13px] text-foco-text opacity-70 space-y-1.5 pl-2 mb-2">
                     <li>Dr. Ivan</li><li>Human Clinic</li>
                 </ul>
                 <div class="bg-foco-card border border-foco-border rounded p-4 flex flex-col items-center justify-center gap-2">
-                    <span class="text-[9px] text-foco-highlight lowercase tracking-[0.2em] font-bold">.piloto</span>
+                    <span class="text-[11px] text-foco-highlight lowercase tracking-[0.2em] font-bold">.piloto</span>
                 </div>
             </div>
 
             <div class="space-y-4 mb-10">
                 <span class="foco-tag text-foco-highlight font-bold">.ops EUA</span>
                 <div class="bg-foco-vector/20 border border-foco-vector/40 rounded p-4 flex flex-col items-center justify-center gap-2">
-                    <span class="text-[9px] text-foco-highlight lowercase tracking-[0.2em] font-bold animate-pulse">.implementação</span>
+                    <span class="text-[11px] text-foco-highlight lowercase tracking-[0.2em] font-bold animate-pulse">.implementação</span>
                 </div>
             </div>
         </aside>
@@ -121,27 +186,27 @@
         <main class="flex-1 flex flex-col pb-20 overflow-hidden">
             
             <section class="mb-16">
-                <h2 class="text-lg font-semibold text-foco-text lowercase mb-8">.organograma macro</h2>
+                <h2 class="text-xl font-semibold text-foco-text lowercase mb-8">.organograma macro</h2>
                 <div class="relative w-full bg-foco-card border border-foco-border rounded-xl p-12 overflow-x-auto glow-blue">
                     <div class="min-w-[900px] flex justify-between items-center px-10 h-14">
                         <div class="flex flex-col items-center justify-center w-32">
-                            <div class="w-10 h-10 rounded-full bg-foco-base border border-zinc-700 flex items-center justify-center mb-1"><span class="text-[10px] text-foco-muted">01</span></div>
+                            <div class="w-10 h-10 rounded-full bg-foco-base border border-zinc-700 flex items-center justify-center mb-1"><span class="text-[12px] text-foco-muted">01</span></div>
                             <span class="foco-tag font-medium">.input</span>
                         </div>
                         <div class="flex flex-col items-center justify-center w-32">
-                            <div class="w-10 h-10 rounded-full bg-foco-vector border border-foco-highlight flex items-center justify-center mb-1 glow-ops"><span class="text-[10px] text-foco-highlight font-bold">02</span></div>
+                            <div class="w-10 h-10 rounded-full bg-foco-vector border border-foco-highlight flex items-center justify-center mb-1 glow-ops"><span class="text-[12px] text-foco-highlight font-bold">02</span></div>
                             <span class="foco-tag text-foco-highlight font-bold">.ops</span>
                         </div>
                         <div class="flex flex-col items-center justify-center w-32">
-                            <div class="w-10 h-10 rounded-full bg-foco-base border border-zinc-700 flex items-center justify-center mb-1"><span class="text-[10px] text-foco-muted">03</span></div>
+                            <div class="w-10 h-10 rounded-full bg-foco-base border border-zinc-700 flex items-center justify-center mb-1"><span class="text-[12px] text-foco-muted">03</span></div>
                             <span class="foco-tag font-medium">.intel</span>
                         </div>
                         <div class="flex flex-col items-center justify-center w-32">
-                            <div class="w-10 h-10 rounded-full bg-foco-base border border-zinc-700 flex items-center justify-center mb-1"><span class="text-[10px] text-foco-muted">04</span></div>
+                            <div class="w-10 h-10 rounded-full bg-foco-base border border-zinc-700 flex items-center justify-center mb-1"><span class="text-[12px] text-foco-muted">04</span></div>
                             <span class="foco-tag font-medium">.execução</span>
                         </div>
                         <div class="flex flex-col items-center justify-center w-32">
-                            <div class="w-10 h-10 rounded-full bg-foco-base border border-zinc-700 flex items-center justify-center mb-1"><span class="text-[10px] text-foco-muted">05</span></div>
+                            <div class="w-10 h-10 rounded-full bg-foco-base border border-zinc-700 flex items-center justify-center mb-1"><span class="text-[12px] text-foco-muted">05</span></div>
                             <span class="foco-tag font-medium">.qualidade</span>
                         </div>
                     </div>
@@ -149,61 +214,61 @@
             </section>
 
             <section class="border-t border-foco-border pt-10">
-                <h2 class="text-lg font-semibold text-foco-text lowercase mb-10">.view operacional detalhada</h2>
+                <h2 class="text-xl font-semibold text-foco-text lowercase mb-10">.view operacional detalhada</h2>
                 <div class="grid grid-cols-1 xl:grid-cols-5 gap-4 overflow-x-auto pb-8">
                     
                     <div class="bg-foco-card border border-foco-border rounded-xl p-5 border-l-2 border-l-zinc-600 min-w-[200px]">
                         <span class="foco-tag text-foco-muted block mb-3">estágio 01</span>
-                        <span class="text-xs font-bold block mb-2 text-foco-text tracking-tight">talentos de CS</span>
-                        <p class="text-[10px] leading-relaxed text-foco-text opacity-60 mb-4">Porta de entrada do squad. Responsável pela submissão do briefing técnico detalhado em primeira instância, garantindo percurso 1x1.</p>
-                        <div class="text-[9px] text-foco-highlight tracking-tighter">Solicitação: 4h</div>
+                        <span class="text-sm font-bold block mb-2 text-foco-text tracking-tight">talentos de CS</span>
+                        <p class="text-[12px] leading-relaxed text-foco-text opacity-60 mb-4">Porta de entrada do squad. Responsável pela submissão do briefing técnico detalhado em primeira instância, garantindo percurso 1x1.</p>
+                        <div class="text-[11px] text-foco-highlight tracking-tighter">Solicitação: 4h</div>
                     </div>
 
                     <div class="bg-foco-vector/10 border border-foco-vector/40 rounded-xl p-5 border-l-2 border-l-foco-vector glow-blue min-w-[200px]">
                         <span class="foco-tag text-foco-highlight block mb-3">estágio 02</span>
-                        <span class="text-xs font-bold block mb-2 text-foco-text tracking-tight">creative producer ops.</span>
-                        <p class="text-[10px] leading-relaxed text-foco-text opacity-80 mb-4">Ponto focal com os demais setores do hub. Realiza a distribuição estratégica de tarefas e centralização da inteligência de fluxo.</p>
-                        <div class="text-[9px] text-foco-highlight tracking-tighter">Aceite técnico: 1d</div>
+                        <span class="text-sm font-bold block mb-2 text-foco-text tracking-tight">creative producer ops.</span>
+                        <p class="text-[12px] leading-relaxed text-foco-text opacity-80 mb-4">Ponto focal com os demais setores do hub. Realiza a distribuição estratégica de tarefas e centralização da inteligência de fluxo.</p>
+                        <div class="text-[11px] text-foco-highlight tracking-tighter">Aceite técnico: 1d</div>
                     </div>
 
                     <div class="bg-foco-card border border-foco-border rounded-xl p-5 min-w-[200px] flex flex-col gap-4">
                         <span class="foco-tag text-foco-muted block mb-1">estágio 03</span>
                         <div>
                             <span class="foco-tag text-foco-muted block mb-2">planejamento digital</span>
-                            <p class="text-[10px] leading-relaxed text-foco-text opacity-60">Construção de calendários, estratégias de performance e roteiros hub/hero/help.</p>
+                            <p class="text-[12px] leading-relaxed text-foco-text opacity-60">Construção de calendários, estratégias de performance e roteiros hub/hero/help.</p>
                         </div>
                         <div class="border-t border-zinc-800 pt-3">
                             <span class="foco-tag text-foco-muted block mb-2">estratégia macro</span>
-                            <p class="text-[10px] leading-relaxed text-foco-text opacity-60">Branding, rebranding, produtos digitais e inteligência estratégica OOH.</p>
+                            <p class="text-[12px] leading-relaxed text-foco-text opacity-60">Branding, rebranding, produtos digitais e inteligência estratégica OOH.</p>
                         </div>
-                        <div class="text-[9px] text-foco-highlight tracking-tighter mt-auto">Planejamento: 1d</div>
+                        <div class="text-[11px] text-foco-highlight tracking-tighter mt-auto">Planejamento: 1d</div>
                     </div>
 
                     <div class="bg-foco-card border border-foco-border rounded-xl p-5 min-w-[200px] flex flex-col gap-4">
                         <span class="foco-tag text-foco-muted block mb-1">estágio 04</span>
                         <div>
                             <span class="foco-tag text-foco-muted block mb-2">time audiovisual</span>
-                            <p class="text-[10px] leading-relaxed text-foco-text opacity-60">Captação real-time, edição dinâmica de vídeo e moodboards para motion design.</p>
+                            <p class="text-[12px] leading-relaxed text-foco-text opacity-60">Captação real-time, edição dinâmica de vídeo e moodboards para motion design.</p>
                         </div>
                         <div class="border-t border-zinc-800 pt-3">
                             <span class="foco-tag text-foco-muted block mb-2">time design</span>
-                            <p class="text-[10px] leading-relaxed text-foco-text opacity-60">Desdobramento de criativos estáticos, diagramação e suporte visual para o grupo.</p>
+                            <p class="text-[12px] leading-relaxed text-foco-text opacity-60">Desdobramento de criativos estáticos, diagramação e suporte visual para o grupo.</p>
                         </div>
-                        <div class="text-[9px] text-foco-highlight tracking-tighter mt-auto">Produção ativa: 1d</div>
+                        <div class="text-[11px] text-foco-highlight tracking-tighter mt-auto">Produção ativa: 1d</div>
                     </div>
 
                     <div class="bg-foco-card border border-foco-border rounded-xl p-5 border-r-2 border-r-foco-vector min-w-[200px]">
                         <span class="foco-tag text-foco-muted block mb-3">estágio 05</span>
-                        <span class="text-xs font-bold block mb-2 text-foco-text tracking-tight">refinamento</span>
-                        <p class="text-[10px] leading-relaxed text-foco-text opacity-60 mb-4">Esteira final de revisão. Responsável pela aprovação interna, agendamento e relatórios de resultados.</p>
-                        <div class="text-[9px] text-foco-highlight tracking-tighter">Qualidade/ reports/ agendamento: 1d</div>
+                        <span class="text-sm font-bold block mb-2 text-foco-text tracking-tight">refinamento</span>
+                        <p class="text-[12px] leading-relaxed text-foco-text opacity-60 mb-4">Esteira final de revisão. Responsável pela aprovação interna, agendamento e relatórios de resultados.</p>
+                        <div class="text-[11px] text-foco-highlight tracking-tighter">Qualidade/ reports/ agendamento: 1d</div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
                     <div class="bg-foco-card border border-foco-border rounded-xl p-6">
-                        <h3 class="text-[10px] font-bold uppercase tracking-widest text-foco-highlight mb-4">flow. conteúdo</h3>
-                        <div class="space-y-3 text-[11px]">
+                        <h3 class="text-[12px] font-bold uppercase tracking-widest text-foco-highlight mb-4">flow. conteúdo</h3>
+                        <div class="space-y-3 text-[13px]">
                             <div class="flex justify-between"><span class="text-foco-muted">input / briefing</span><span>4h</span></div>
                             <div class="flex justify-between"><span class="text-foco-muted">aceite & triagem ops</span><span>1d</span></div>
                             <div class="flex justify-between"><span class="text-foco-muted">planejamento intel</span><span>1d</span></div>
@@ -212,8 +277,8 @@
                         </div>
                     </div>
                     <div class="bg-foco-card border border-foco-border rounded-xl p-6">
-                        <h3 class="text-[10px] font-bold uppercase tracking-widest text-foco-highlight mb-4">flow. design & audiovisual</h3>
-                        <div class="space-y-3 text-[11px]">
+                        <h3 class="text-[12px] font-bold uppercase tracking-widest text-foco-highlight mb-4">flow. design & audiovisual</h3>
+                        <div class="space-y-3 text-[13px]">
                             <div class="flex justify-between"><span class="text-foco-muted">input de ativos / briefing</span><span>4h</span></div>
                             <div class="flex justify-between"><span class="text-foco-muted">triagem técnica ops</span><span>1d</span></div>
                             <div class="flex justify-between"><span class="text-foco-muted">execução / desdobramento</span><span>2d</span></div>
@@ -224,13 +289,13 @@
                 </div>
 
                 <section class="border-t border-foco-border pt-10 mb-20">
-                    <h2 class="text-lg font-semibold text-foco-text lowercase mb-8">.roadmap</h2>
+                    <h2 class="text-xl font-semibold text-foco-text lowercase mb-8">.roadmap</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         
                         <div class="bg-foco-card border border-foco-border rounded-2xl overflow-hidden group">
                             <div class="p-6 border-b border-foco-border">
-                                <h3 class="text-sm font-bold text-foco-highlight lowercase">.foco podcast</h3>
-                                <p class="text-[10px] text-foco-muted mt-1 uppercase tracking-tighter">expansão de autoridade e conteúdo audiovisual</p>
+                                <h3 class="text-base font-bold text-foco-highlight lowercase">.foco podcast</h3>
+                                <p class="text-[12px] text-foco-muted mt-1 uppercase tracking-tighter">expansão de autoridade e conteúdo audiovisual</p>
                             </div>
                             <div class="aspect-video bg-black flex items-center justify-center">
                                 <video class="w-full h-full object-cover" autoplay muted loop playsinline>
@@ -241,28 +306,29 @@
 
                         <div class="bg-foco-card border border-foco-border rounded-2xl overflow-hidden group">
                             <div class="p-6 border-b border-foco-border">
-                                <h3 class="text-sm font-bold text-foco-highlight lowercase">.in-media</h3>
-                                <p class="text-[10px] text-foco-muted mt-1 uppercase tracking-tighter">ecossistema de redes sociais internas</p>
+                                <h3 class="text-base font-bold text-foco-highlight lowercase">.in-media</h3>
+                                <p class="text-[12px] text-foco-muted mt-1 uppercase tracking-tighter">ecossistema de redes sociais internas</p>
                             </div>
                             <div class="p-8 flex flex-col md:flex-row gap-8 items-center">
                                 <div class="flex-1 space-y-4">
-                                    <div class="flex items-center gap-2 text-[15px] text-foco-text opacity-70">
+                                    <div class="flex items-center gap-2 text-[17px] text-foco-text opacity-70">
                                         <span class="text-foco-highlight">@</span>focogroup.
                                     </div>
-                                    <div class="flex items-center gap-2 text-[15px] text-foco-text opacity-70">
-                                        <span class="text-foco-highlight">@</span>focomarketing
+                                    <div class="flex items-center gap-2 text-[17px] text-foco-text opacity-70">
+                                        <span class="text-foco-highlight">@</span>focomarketing.
                                     </div>
-                                    <div class="flex items-center gap-2 text-[15px] text-foco-text opacity-70">
-                                        <span class="text-foco-highlight">@</span>focoprodutora
+                                    <div class="flex items-center gap-2 text-[17px] text-foco-text opacity-70">
+                                        <span class="text-foco-highlight">@</span>focoprodutora.
                                     </div>
-                                    <div class="flex items-center gap-2 text-[15px] text-foco-text opacity-70">
-                                        <span class="text-foco-highlight">@</span>focohealth
+                                    <div class="flex items-center gap-2 text-[17px] text-foco-text opacity-70">
+                                        <span class="text-foco-highlight">@</span>focohealth.
                                     </div>
-                                    <div class="flex items-center gap-2 text-[15px] text-foco-text opacity-70">
-                                        <span class="text-foco-highlight">@</span>felipemeireles
+                                    <div class="flex items-center gap-2 text-[17px] text-foco-text opacity-70">
+                                        <span class="text-foco-highlight">@</span>felipemeireles.
                                     </div>
-                                 <div class="flex items-center gap-2 text-[15px] text-foco-text opacity-70">
-                                        <span class="text-foco-highlight">in</span>linkedin
+                                    <div class="flex items-center gap-2 text-[17px] text-foco-text opacity-70">
+                                        <span class="text-foco-highlight">in</span>linkedin.
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -280,10 +346,74 @@
             <span class="foco-tag text-foco-muted hover:text-foco-highlight transition-colors cursor-default">.brainstorming</span>
         </div>
         <div class="flex flex-col items-end gap-2">
-            <span class="text-[9px] text-foco-muted uppercase tracking-widest font-medium">v.1.37 — foco group.</span>
+            <span class="text-[11px] text-foco-muted uppercase tracking-widest font-medium">v.1.38 — foco group.</span>
             <img src="assinatura.png" alt="assinatura" class="h-6 w-auto opacity-50 hover:opacity-100 transition-opacity" onerror="this.style.display='none'">
         </div>
     </footer>
+
+    <div id="side-panel-overlay" class="fixed inset-0 bg-black/70 z-40 hidden opacity-0 transition-opacity duration-300" onclick="closeClientPanel()"></div>
+    
+    <aside id="client-detail-panel" class="fixed top-0 right-0 h-full w-full md:w-[550px] bg-foco-card border-l border-foco-border z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
+        
+        <div class="p-10 border-b border-foco-border flex justify-between items-start">
+            <div class="w-full">
+                <span class="foco-tag text-foco-highlight font-bold block mb-4">.detalhes da conta</span>
+                
+                <div class="flex items-center gap-5">
+                    <div class="w-14 h-14 rounded-full bg-foco-base border border-foco-vector/50 flex items-center justify-center overflow-hidden shrink-0 shadow-lg">
+                        <img id="panel-client-logo" src="" alt="Logo" class="w-full h-full object-cover hidden" onerror="this.classList.add('hidden'); document.getElementById('panel-client-initial').classList.remove('hidden');">
+                        <span id="panel-client-initial" class="text-2xl font-bold text-foco-highlight"></span>
+                    </div>
+                    
+                    <div>
+                        <h2 id="panel-client-name" class="text-3xl font-bold text-white tracking-tight leading-none">Nome</h2>
+                        <span id="panel-client-category" class="text-[13px] text-foco-muted mt-2 block">Categoria / Segmento</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="closeClientPanel()" class="text-foco-muted hover:text-white transition-colors bg-foco-base p-2 rounded-full border border-foco-border shrink-0 ml-4 mt-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="p-10 space-y-8 overflow-y-auto flex-1">
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-foco-base p-5 rounded-2xl border border-zinc-800">
+                    <span class="text-[11px] text-foco-muted uppercase tracking-widest font-bold block mb-2">Talento de CS</span>
+                    <span id="panel-client-cs" class="text-[15px] text-white font-medium">Nome do CS</span>
+                </div>
+                <div class="bg-foco-vector/10 p-5 rounded-2xl border border-foco-vector/40">
+                    <span class="text-[11px] text-foco-highlight uppercase tracking-widest font-bold block mb-2">Frente de contrato</span>
+                    <span id="panel-client-sla" class="text-[15px] text-white font-medium">3.5 dias úteis</span>
+                </div>
+            </div>
+
+            <div class="bg-foco-base border border-zinc-800 rounded-2xl p-6">
+                <h3 class="text-[11px] font-bold uppercase tracking-widest text-foco-muted mb-3 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-foco-highlight" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    Escopo Operacional
+                </h3>
+                <p id="panel-client-scope" class="text-[14px] leading-relaxed text-foco-text opacity-90">
+                    As responsabilidades do squad aparecerão aqui.
+                </p>
+            </div>
+
+            <div class="bg-foco-base border border-zinc-800 rounded-2xl p-6">
+                <h3 class="text-[11px] font-bold uppercase tracking-widest text-foco-muted mb-3 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-foco-highlight" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    Entregáveis do Mês
+                </h3>
+                <p id="panel-client-deliverables" class="text-[14px] leading-relaxed text-white font-medium">
+                    A quantidade de criativos, edições ou roteiros aparecerão aqui.
+                </p>
+            </div>
+            
+        </div>
+    </aside>
 
 </body>
 </html>
